@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-connect
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-connect
+  template:
+    metadata:
+      labels:
+        app: kafka-connect
+    spec:
+      containers:
+        - name: kafka-connect
+          image: confluentinc/cp-kafka-connect:7.4.0  # Replace with the desired version
+          ports:
+            - containerPort: 8083
+          env:
+            - name: BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: kafka-connect-config
+                  key: bootstrap.servers
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-connect-secret
+                  key: aws.access.key.id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-connect-secret
+                  key: aws.secret.access.key
+          volumeMounts:
+            - name: connector-config
+              mountPath: /etc/kafka-connect/config
+              readOnly: true
+      volumes:
+        - name: connector-config
+          configMap:
+            name: kafka-connect-config

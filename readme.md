@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains the Infrastructure as Code (IaC) solution for a Data Processing product. The architecture is designed to handle large-scale data processing workloads (up to 5TB per day), ensuring scalability, reliability, and quick response times, even during peak periods. The solution uses Terraform modules and Terragrunt to manage cloud resources efficiently.
+This repository contains the Infrastructure as Code (IaC) solution for a Data Processing product. The architecture is designed to handle large-scale data processing workloads (up to 5TB per day), ensuring scalability, reliability, and quick response times, even during peak periods. The solution uses Terraform modules and Terragrunt to manage cloud resources efficiently. Additionally, Kafka Connect and Sink Connector have been integrated into the solution to facilitate seamless data flow, enabling backend service workers to process and store data efficiently.
 
 ### Problem Statement
 
@@ -22,6 +22,11 @@ The proposed architecture includes:
 - **Amazon MSK (Managed Streaming for Apache Kafka)**: For reliable and high-throughput data streaming.
 - **Amazon KMS (Key Management Service)**: For secure encryption of sensitive data.
 
+### Kubernetes Additions
+
+- **Kafka Connect**: Deployed on EKS to enable data integration and streaming pipelines.
+- **Sink Connector**: Configured to process and transfer data to downstream systems, such as S3, once backend services are operational.
+
 ### Features
 
 - **Scalable Infrastructure**: Automatically handles dynamic workload increases using Amazon EKS and MSK.
@@ -34,6 +39,8 @@ The proposed architecture includes:
 - **IaC Tools**: 
   - [Terraform](https://www.terraform.io/): For infrastructure provisioning.
   - [Terragrunt](https://terragrunt.gruntwork.io/): To manage Terraform modules and ensure reusability.
+- **Kubernetes**:
+  - Kafka Connect and Sink Connector manifests.
 - **AWS Services**:
   - Amazon VPC, NAT Gateway, Internet Gateway, S3, Glacier, MSK, KMS, and EKS.
 
@@ -44,6 +51,7 @@ The proposed architecture includes:
    - Terraform CLI installed.
    - Terragrunt CLI installed.
    - AWS CLI configured with appropriate IAM permissions.
+   - kubectl installed and configured for the EKS cluster.
 
 2. **Steps**:
    - Clone this repository:
@@ -59,11 +67,22 @@ The proposed architecture includes:
      ```
    - Follow the prompts to confirm the changes.
 
+3. **Kafka Connect Deployment**:
+   - Navigate to the `k8s` directory.
+   - Apply the manifests:
+     ```bash
+     kubectl apply -f ./k8s
+     ```
+   - Verify the deployment:
+     ```bash
+     kubectl get pods
+
 ## Future Enhancements
 
 - Integration with monitoring tools (e.g., Prometheus and Grafana) for real-time insights.
 - Autoscaling for MSK and EKS to handle extreme peak loads.
 - Implement CI/CD pipelines for automated deployments.
+- Development and integration of backend service workers for end-to-end data processing.
 
 ## Contributing
 
